@@ -28,7 +28,8 @@ function WebcamCapture () {
   const [imgSrc, setImgSrc] = useState("");
   const [messageHistory, setMessageHistory] = useState([]);
 
-  const [socketUrl, setSocketUrl] = useState('wss://echo.websocket.org');
+  // const [socketUrl, setSocketUrl] = useState('wss://echo.websocket.org');
+  const [socketUrl, setSocketUrl] = useState('ws://127.0.0.1:8000/ws/1');
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
