@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from draw import draw, add_bounding_boxes
+from computer_vision.classification import get_clf_prediction
 from PIL import Image
 import numpy as np
 import pybase64
@@ -12,7 +13,7 @@ app = FastAPI()
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: list[WebSocket] = []
+        self.active_connections = []
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
@@ -23,7 +24,6 @@ class ConnectionManager:
 
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
-
 
 
 manager = ConnectionManager()
@@ -41,15 +41,16 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
         while True:
             data = await websocket.receive()
             _, raw = data.get("text").split(",")
-            # with open("imageToSave.png", "wb") as fh:
+
+            img = Image.open(io.BytesIO(base64.b64decode(raw)))
+            clf_prediction = get_clf_prediction(img)
+
+            # with open("computer_vision/imageToSave.png", "wb") as fh:
             #     fh.write(pybase64.b64decode((raw)))
-            # img = base64.b64decode(raw)
-            # img = Image.open(io.BytesIO(img))
-            # img = np.asarray(img)
             # print(type(img))
             # result = draw(img)
             # result = Image.fromarray(result)
-
+            #
             # result = add_bounding_boxes(img)
             # result = base64.b64encode(result)
             # print(result)
@@ -61,8 +62,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
 
             # print((base64.b64encode(result)))
             # result = result()
-            print(raw)
+            # print(raw)
 
-            await manager.send_personal_message(raw, websocket)
+            await manager.send_personal_message(clf_prediction, websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
