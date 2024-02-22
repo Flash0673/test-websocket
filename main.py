@@ -1,12 +1,13 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
-from draw import draw, add_bounding_boxes
-from computer_vision.classification import get_clf_prediction
+# from fastapi.responses import HTMLResponse
+# from draw import draw, add_bounding_boxes
+# from computer_vision.classification import get_clf_prediction
 from computer_vision.detection import get_bbox_prediction
 from PIL import Image
 import numpy as np
 import pybase64
 import base64
+import json
 import io
 
 app = FastAPI()
@@ -43,13 +44,16 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive()
-            _, raw = data.get("text").split(",")
+            data = await websocket.receive_text()
+            data = json.loads(data)
+            imageByt64 = data['data']['image'].split(',')[1]
+            # _, raw = data.get("text").split(",")
+
 
             # img = Image.open(io.BytesIO(base64.b64decode(raw)))
             # clf_prediction = get_clf_prediction(img)
 
-            img = Image.open(io.BytesIO(base64.b64decode(raw)))
+            img = Image.open(io.BytesIO(base64.b64decode(imageByt64)))
             yolo_prediction = get_bbox_prediction(img)
 
             # with open("computer_vision/imageToSave.png", "wb") as fh:
