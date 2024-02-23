@@ -1,12 +1,8 @@
 import json
-import math
 import os
-import random
-import sys
 
 import torch
 from PIL import Image
-from torchvision.transforms import Compose, Normalize, Resize, ToTensor
 from torchvision.models import resnet18, ResNet18_Weights
 from torchvision.models import resnet152, ResNet152_Weights
 
@@ -15,7 +11,7 @@ with open(os.path.join(os.path.dirname(__file__), "resources/imagenet_cls_mappin
     imagenet_cls_mapping = json.loads(f.read())
 
 
-def get_clf_prediction(image, torch_model=resnet18, torch_weights=ResNet18_Weights.DEFAULT):
+def get_clf_prediction(image, torch_model=resnet152, torch_weights=ResNet152_Weights.DEFAULT):
 
     # Apply transforms to the input image
     preprocess = torch_weights.transforms()
