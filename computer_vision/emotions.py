@@ -1,7 +1,7 @@
 import json
 import os
 
-from fer_pytorch.fer import FER as TorchFer
+# from fer_pytorch.fer import FER as TorchFer
 from fer import FER as TfFer
 import warnings
 import cv2
@@ -10,8 +10,8 @@ import cv2
 warnings.filterwarnings("ignore")
 detector_tf = TfFer()
 
-detector_torch = TorchFer()
-detector_torch.get_pretrained_model("resnet34")
+# detector_torch = TorchFer()
+# detector_torch.get_pretrained_model("resnet34")
 
 
 def get_bbox_prediction_tf(image, debug=False):
